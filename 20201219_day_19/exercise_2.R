@@ -1,0 +1,170 @@
+#' **--- Part Two ---**
+#'   
+#' As you look over the list of messages, you realize your matching rules aren't 
+#' quite right. To fix them, completely replace rules 8: 42 and 11: 42 31 with 
+#' the following:
+#' 
+#' 8: 42 | 42 8
+#' 11: 42 31 | 42 11 31
+#' 
+#' This small change has a big impact: now, the rules do contain loops, and the 
+#' list of messages they could hypothetically match is infinite. You'll need to 
+#' determine how these changes affect which messages are valid.
+#' 
+#' Fortunately, many of the rules are unaffected by this change; it might help 
+#' to start by looking at which rules always match the same set of values and 
+#' how those rules (especially rules 42 and 31) are used by the new versions of 
+#' rules 8 and 11.
+#' 
+#' (Remember, you only need to handle the rules you have; building a solution 
+#' that could handle any hypothetical combination of rules would be 
+#' significantly more difficult.)
+#' 
+#' For example:
+#'   
+#' 42: 9 14 | 10 1
+#' 9: 14 27 | 1 26
+#' 10: 23 14 | 28 1
+#' 1: "a"
+#' 11: 42 31
+#' 5: 1 14 | 15 1
+#' 19: 14 1 | 14 14
+#' 12: 24 14 | 19 1
+#' 16: 15 1 | 14 14
+#' 31: 14 17 | 1 13
+#' 6: 14 14 | 1 14
+#' 2: 1 24 | 14 4
+#' 0: 8 11
+#' 13: 14 3 | 1 12
+#' 15: 1 | 14
+#' 17: 14 2 | 1 7
+#' 23: 25 1 | 22 14
+#' 28: 16 1
+#' 4: 1 1
+#' 20: 14 14 | 1 15
+#' 3: 5 14 | 16 1
+#' 27: 1 6 | 14 18
+#' 14: "b"
+#' 21: 14 1 | 1 14
+#' 25: 1 1 | 1 14
+#' 22: 14 14
+#' 8: 42
+#' 26: 14 22 | 1 20
+#' 18: 15 15
+#' 7: 14 5 | 1 21
+#' 24: 14 1
+#' 
+#' abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa
+#' bbabbbbaabaabba
+#' babbbbaabbbbbabbbbbbaabaaabaaa
+#' aaabbbbbbaaaabaababaabababbabaaabbababababaaa
+#' bbbbbbbaaaabbbbaaabbabaaa
+#' bbbababbbbaaaaaaaabbababaaababaabab
+#' ababaaaaaabaaab
+#' ababaaaaabbbaba
+#' baabbaaaabbaaaababbaababb
+#' abbbbabbbbaaaababbbbbbaaaababb
+#' aaaaabbaabaaaaababaa
+#' aaaabbaaaabbaaa
+#' aaaabbaabbaaaaaaabbbabbbaaabbaabaaa
+#' babaaabbbaaabaababbaabababaaab
+#' aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba
+#' 
+#' Without updating rules 8 and 11, these rules only match three messages: 
+#' bbabbbbaabaabba, ababaaaaaabaaab, and ababaaaaabbbaba.
+#' 
+#' However, after updating rules 8 and 11, a total of 12 messages match:
+#'   
+#' bbabbbbaabaabba
+#' babbbbaabbbbbabbbbbbaabaaabaaa
+#' aaabbbbbbaaaabaababaabababbabaaabbababababaaa
+#' bbbbbbbaaaabbbbaaabbabaaa
+#' bbbababbbbaaaaaaaabbababaaababaabab
+#' ababaaaaaabaaab
+#' ababaaaaabbbaba
+#' baabbaaaabbaaaababbaababb
+#' abbbbabbbbaaaababbbbbbaaaababb
+#' aaaaabbaabaaaaababaa
+#' aaaabbaabbaaaaaaabbbabbbaaabbaabaaa
+#' aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba
+#' 
+#' After updating rules 8 and 11, how many messages completely match rule 0?
+
+# Setup ------------------------------------------------------------------------
+source('exercise_1.R')
+
+test_input <- c(
+  "42: 9 14 | 10 1",
+  "9: 14 27 | 1 26",
+  "10: 23 14 | 28 1",
+  "1: a",
+  "11: 42 31",
+  "5: 1 14 | 15 1",
+  "19: 14 1 | 14 14",
+  "12: 24 14 | 19 1",
+  "16: 15 1 | 14 14",
+  "31: 14 17 | 1 13",
+  "6: 14 14 | 1 14",
+  "2: 1 24 | 14 4",
+  "0: 8 11",
+  "13: 14 3 | 1 12",
+  "15: 1 | 14",
+  "17: 14 2 | 1 7",
+  "23: 25 1 | 22 14",
+  "28: 16 1",
+  "4: 1 1",
+  "20: 14 14 | 1 15",
+  "3: 5 14 | 16 1",
+  "27: 1 6 | 14 18",
+  "14: b",
+  "21: 14 1 | 1 14",
+  "25: 1 1 | 1 14",
+  "22: 14 14",
+  "8: 42",
+  "26: 14 22 | 1 20",
+  "18: 15 15",
+  "7: 14 5 | 1 21",
+  "24: 14 1",
+  "",
+  "abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa",
+  "bbabbbbaabaabba",
+  "babbbbaabbbbbabbbbbbaabaaabaaa",
+  "aaabbbbbbaaaabaababaabababbabaaabbababababaaa",
+  "bbbbbbbaaaabbbbaaabbabaaa",
+  "bbbababbbbaaaaaaaabbababaaababaabab",
+  "ababaaaaaabaaab",
+  "ababaaaaabbbaba",
+  "baabbaaaabbaaaababbaababb",
+  "abbbbabbbbaaaababbbbbbaaaababb",
+  "aaaaabbaabaaaaababaa",
+  "aaaabbaaaabbaaa",
+  "aaaabbaabbaaaaaaabbbabbbaaabbaabaaa",
+  "babaaabbbaaabaababbaabababaaab",
+  "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba"
+)
+
+real_input <- readLines('input.txt')
+
+# Processing -------------------------------------------------------------------
+input_to_process <- real_input              # Which input to process
+rules <- get_rules(input_to_process)        # Get rules
+
+# Replace rules '8' and '11' with recursive versions, as described in the
+# puzzle instructions. These have been modified to include the relevant
+# regex rules for each. For rule['8'], this meant replacing the self-reference
+# to rule '8' with the regex for one or more matches to rule '42'. For 
+# rule['11'], this meant wrapping the second part of the rule in a named
+# capture group ('rec') and replaced the self-reference with a recursive regex
+# match to the named capture group `&rec`. 
+rules['8'] <- "(42 | (42)+)"
+rules['11'] <- "(42 31 | (?'rec' 42 (?&rec)? 31))"
+
+
+messages <- get_messages(input_to_process)  # Get messages
+rule0 <- expand_rule('0', rules)            # Expand rule['0'] to regex
+
+# Check each message against rule['0'] to see if it matches
+matches <- sapply(messages, function(x) grepl(rule0, x, perl = TRUE))
+answer2 <- sum(matches)  # The number of matches
+
+# Answer: 267
