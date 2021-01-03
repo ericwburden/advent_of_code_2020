@@ -90,7 +90,7 @@ test_pattern <- "..##.......
                  #...##....#
                  .#..#...#.#"
 
-input <- paste(readLines('input.txt'), collapse = '\n')
+input <- paste(readLines('../input.txt'), collapse = '\n')
 
 #' Helper function, converts a character map to a matrix
 trees_map <- function(pattern) {
