@@ -210,7 +210,7 @@ fn time_it(f: fn(&Vec<PasswordLine>) -> (), password_lines: &Vec<PasswordLine>) 
     f(password_lines);
     let duration = start.elapsed();
 
-    println!("Solved in: {:?}\n\n", duration);
+    println!("Solved in: {:?}\n", duration);
 }
 
 fn main() {
@@ -223,7 +223,7 @@ fn main() {
     // Parse into structured content
     let password_lines = parse_input_lines(&input_data);
 
-    // Chech password validity according to puzzle rules
+    // Check password validity according to puzzle rules
     time_it(part_one, &password_lines);
     time_it(part_two, &password_lines);
 }
