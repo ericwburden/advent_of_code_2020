@@ -62,6 +62,7 @@
 
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
+use std::time::Instant;
 
 // Read in the input file as a Vec<String>
 fn read_input(filename: &str) -> Result<Vec<String>, Error> {
@@ -196,9 +197,20 @@ fn part_two(password_lines: &Vec<PasswordLine>) {
         .map(|x| x.part_two_valid())
         .fold(0, |total, next| total + if next { 1 } else { 0 });
 
-    println!("\n{} valid passwords, part two.\n", valid_passwords);
+    println!("\n{} valid passwords, part two.", valid_passwords);
 
     // Answer: 321
+}
+
+// Timing function, given the function to run and the input arguments, runs
+// the function with the given input and prints the time to run to the
+// console
+fn time_it(f: fn(&Vec<PasswordLine>) -> (), password_lines: &Vec<PasswordLine>) {
+    let start = Instant::now();
+    f(password_lines);
+    let duration = start.elapsed();
+
+    println!("Solved in: {:?}\n\n", duration);
 }
 
 fn main() {
@@ -212,6 +224,6 @@ fn main() {
     let password_lines = parse_input_lines(&input_data);
 
     // Chech password validity according to puzzle rules
-    part_one(&password_lines);
-    part_two(&password_lines);
+    time_it(part_one, &password_lines);
+    time_it(part_two, &password_lines);
 }
