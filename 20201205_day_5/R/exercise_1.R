@@ -112,7 +112,7 @@ seat_id <- function(row, col) {
 # The Answer -------------------------------------------------------------------
 
 test_input <- c("BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFRLL")
-input <- readLines('input.txt')
+input <- readLines('../input.txt')
 
 parsed_passes <- do.call(rbind, lapply(input, parse_pass))  # A matrix!
 answer <- max(parsed_passes[,'seat_id'])
