@@ -49,19 +49,19 @@ test_input2 <- c(
 )
 
 bag_contains <- function(bag_type, rules) {
-    if (is.null(rules[[bag_type]])) { return(0) }
+  if (is.null(rules[[bag_type]])) { return(0) }
 
-    total_bags <- 0
-    for (child_type in names(rules[[bag_type]])) {
-      result <- bag_contains(child_type, rules)    # Bags this child contains
-      children <- rules[[bag_type]][[child_type]]  # Number of children
+  total_bags <- 0
+  for (child_type in names(rules[[bag_type]])) {
+    result <- bag_contains(child_type, rules)    # Bags this child contains
+    children <- rules[[bag_type]][[child_type]]  # Number of children
 
-      # Add the number of bags each child contains, plus the
-      total_bags <- total_bags + (result * children) + children
-    }
-
-    return(total_bags)
+    # Add the number of bags each child contains, plus the
+    total_bags <- total_bags + (result * children) + children
   }
+
+  return(total_bags)
+}
 
 
 

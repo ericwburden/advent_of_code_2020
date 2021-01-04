@@ -64,7 +64,7 @@ test_input1 <- c(
   "dotted black bags contain no other bags."
 )
 
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 parse_rule <- function(rule_str) {
   rule_name <- str_extract(rule_str, '^[a-z\\s]+bag(?=s\\s)')
