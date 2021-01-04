@@ -81,7 +81,7 @@ test_input <- "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
 
                hcl:#cfa07d eyr:2025 pid:166559648
                iyr:2011 ecl:brn hgt:59in"
-real_input <- read_file('input.txt')
+real_input <- read_file('../input.txt')
 
 is_valid <- function(creds) {
   required_fields <- c('byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid')
@@ -102,4 +102,4 @@ all_passports <- unlist(str_split(real_input, '\\n\\s*\\n'))
 all_passports <- all_passports[all_passports != '']
 all_passports_parsed <- lapply(all_passports, parse_passport)
 valid_passports <- sapply(all_passports_parsed, is_valid)
-answer <- sum(valid_passports)
+answer1 <- sum(valid_passports)
