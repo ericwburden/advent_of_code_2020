@@ -67,7 +67,7 @@ library(dequer)
 library(purrr)
 
 test_input <- c('abc', '', 'a', 'b', 'c', '', 'ab', 'ac', '', 'a', 'a', 'a', 'a', '', 'b')
-real_input <- trimws(readLines('input.txt'))
+real_input <- trimws(readLines('../input.txt'))
 
 parse_input <- function(input) {
   groups <- length(input[input == '']) + 1
