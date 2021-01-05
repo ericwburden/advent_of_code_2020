@@ -86,7 +86,7 @@ test_input <- c(
   "jmp -4",
   "acc +6"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 # Simulation approach ----------------------------------------------------------
 
@@ -192,7 +192,7 @@ instructions_to_graph <- function(instructions) {
     set_vertex_attr('acc', value = c(acc, 0))
 }
 
-instructions <- parse_instructions(test_input)
+instructions <- parse_instructions(real_input)
 instr_graph <- instructions_to_graph(instructions)
 plot(instr_graph)
 operation_path_vertices <- subcomponent(instr_graph, 1, mode = 'out')

@@ -128,7 +128,7 @@ answer2 <- sum(path_to_end$acc)
 
 # Brute Graph Approach ---------------------------------------------------------
 
-instructions <- parse_instructions(test_input)
+instructions <- parse_instructions(real_input)
 instr_graph <- instructions_to_graph(instructions)
 
 jmp_vertices <- V(instr_graph)[V(instr_graph)$name == 'jmp']
