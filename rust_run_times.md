@@ -53,9 +53,14 @@
 - 21.113979ms
 - 32.41183ms
 
+### Day 12
+
+- 138.126us
+- 126.11us
+
 ## Total so far...
 
-- Part Ones: 23.691584ms
-- Part Twos: 35.112892ms
-- Total: 58.804476ms
+- Part Ones: 23.82971ms
+- Part Twos: 35.239002ms
+- Total: 59.068712ms
 
