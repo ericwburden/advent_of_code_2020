@@ -55,7 +55,7 @@
 #' distance between that location and the ship's starting position?
 
 test_input <- c("F10", "N3", "F7", "R90", "F11")
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 # Helper function, given a list of strings in the format 'CN' where 'C' is an
 # uppercase character (one of 'N', 'S', 'E', 'W', 'L', 'R', 'F') and 'N' is 
