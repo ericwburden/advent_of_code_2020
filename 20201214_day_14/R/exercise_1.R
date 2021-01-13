@@ -73,7 +73,7 @@ test_input <- c(
   "mem[8] = 0"
 )
 
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 library(stringr)  # For str_split(), str_extract()
 
