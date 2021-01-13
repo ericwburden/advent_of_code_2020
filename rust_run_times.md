@@ -58,9 +58,14 @@
 - 138.126us
 - 126.11us
 
+### Day 13
+
+- 16.797us
+- 19.44us
+
 ## Total so far...
 
-- Part Ones: 23.82971ms
-- Part Twos: 35.239002ms
-- Total: 59.068712ms
+- Part Ones: 23.846507ms
+- Part Twos: 35.258442ms
+- Total: 59.104949ms
 
