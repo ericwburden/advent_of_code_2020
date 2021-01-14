@@ -73,6 +73,7 @@
 library(stringr)
 library(tidyr)
 library(dplyr)
+library(dequer)
 
 test_input <- c(
   "class: 1-3 or 5-7",
@@ -89,8 +90,13 @@ test_input <- c(
   "38,6,12"
 )
 
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
+
+# Given a line from the input for a field test (i.e., in the format of 
+# "class: 1-3 or 5-7"), returns a closure that accepts a number and 
+# returns TRUE if the number matches one of the defined ranges from the
+# input and FALSE if it does not.
 field_test_function <- function(line) {
   nums <- as.numeric(str_extract_all(line, '\\d+', simplify = TRUE))
   range_one <- nums[1]:nums[2]
@@ -101,59 +107,114 @@ field_test_function <- function(line) {
   }
 }
 
-operating_env <- function(env) {
-  with(env, {
-    all_results <- data.frame(
-      ticket_no  = numeric(0)  , field_no = numeric(0),
-      field      = character(0), match    = logical(0)
-    )
-    for (ticket_no in 1:length(nearby_tickets)) {
-      field_vals <- nearby_tickets[[ticket_no]]
-      matches <- sapply(field_tests, function(f) { f(field_vals) }) %>% 
-        as.data.frame() %>% 
-        mutate(
-          ticket_no = ticket_no,
-          field_no = row_number(),
-          field_val = field_vals
-        ) %>% 
-        pivot_longer(
-          -c('ticket_no', 'field_no', 'field_val'), 
-          names_to = 'field', 
-          values_to = 'match'
-        )
-      all_results <- bind_rows(all_results, matches)
-    }
-  })
-  env
-}
 
+# Given a list of input lines `input`, returns an environment containing
+# a list of functions for testing fields `field_tests`, a numeric vector
+# containing the values from your ticket `my_ticket`, and a list containing
+# the values from all the other tickets `nearby_tickets`
 parse_input <- function(input) {
-  op_env <- new.env()
-  op_env$field_tests <- list()
-  op_env$my_ticket <- numeric(0)
-  op_env$nearby_tickets <- list()
-  mode <- 'tests'
+  env <- new.env()             # Container environment
+  env$field_tests <- list()    # List of functions for testing fields
+  env$my_ticket <- numeric(0)  # Vector for 'my ticket' numbers
+  nearby_tickets <- stack()    # Stack to hold other ticket numbers
+  mode <- 'tests'              # Indicates what the for loop does with current line
+  
+  # For each line in the input lines...
   for (line in input) {
-    if (line == "") { next }
+    if (line == "") { next }  # Skip blank lines
+    
+    # Set `mode` to parse my ticket data
     if (line == 'your ticket:') { mode <- 'my ticket'; next }
+    
+    # Set `mode` to parse numbers from other tickets
     if (line == 'nearby tickets:') { mode <- 'other tickets'; next }
+    
+    # The default, for the first set of input lines create a function for
+    # each that will test a number to see if it falls within the given ranges
     if (mode == 'tests') { 
       name <- str_extract(line, '^[\\w\\s]+(?=:)')
-      op_env$field_tests[[name]] <- field_test_function(line)
+      env$field_tests[[name]] <- field_test_function(line)
     }
+    
+    # For 'my ticket', just get the numbers
     if (mode == 'my ticket') {
-      op_env$my_ticket <- as.numeric(unlist(strsplit(line, ',')))
+      env$my_ticket <- as.numeric(unlist(strsplit(line, ',')))
     }
+    
+    # For 'other tickets', get the numbers and push them onto the 
+    # `nearby_tickets` stack
     if (mode == 'other tickets') {
       ticket_nums <- as.numeric(unlist(strsplit(line, ',')))
-      op_env$nearby_tickets[[length(op_env$nearby_tickets)+1]] <- ticket_nums
+      push(nearby_tickets, ticket_nums)
     }
   }
-  operating_env(op_env)
+  
+  env$nearby_tickets <- as.list(nearby_tickets)  # Stack to list
+  env  # Return the environment
 }
 
-op_env <- parse_input(real_input)
-answer1 <- op_env$all_results %>% 
+
+# Given a list of vectors containing the field data from nearby tickets 
+# `nearby_tickets` and a list of tests to determine whether a number satisfies
+# the ranges for a given field `field_tests`, builds and returns a data frame
+# where each row represents the results of testing single field in a single 
+# ticket for a match against the rules for a named field. So, one row per test, 
+# per field, per ticket. Includes columns that represent a unique identifier for 
+# the ticket `ticket_no`, the order in which that field appears on the ticket 
+# `field_no`, the name of the field being tested for `field`, whether the 
+# value of that field matched the test for the named field `match`, and the
+# value of the field being examined `field_val`
+get_field_matches <- function(nearby_tickets, field_tests) {
+  
+  # Structure for the resulting data frame
+  all_results <- data.frame(
+    ticket_no = numeric(0)  , field_no = numeric(0),
+    field     = character(0), match    = logical(0),
+    field_val = numeric(0)
+  )
+  
+  # For each vector in `nearby_tickets`...
+  for (ticket_no in 1:length(nearby_tickets)) {
+    # Shorthand reference to ticked field values
+    field_vals <- nearby_tickets[[ticket_no]]  
+    
+    # Check each field value against each field test function, convert the
+    # results into a data frame
+    matches <- sapply(field_tests, function(f) { f(field_vals) }) %>% 
+      as.data.frame() %>% 
+      mutate(
+        ticket_no = ticket_no,
+        field_no = row_number(),
+        field_val = field_vals
+      ) %>% 
+      pivot_longer(
+        -c('ticket_no', 'field_no', 'field_val'), 
+        names_to = 'field', 
+        values_to = 'match'
+      )
+    
+    all_results <- bind_rows(all_results, matches)  # Append to our data frame
+  }
+  
+  all_results  # Return the data frame
+}
+
+input_environment <- parse_input(real_input)  # Unpack the input
+
+# Parse the input data into a data frame indicating matches against the field
+# test functions
+field_matches <- get_field_matches(
+  input_environment$nearby_tickets, 
+  input_environment$field_tests
+) 
+
+# Determine the answer:
+# - Group the data frame by `ticket_no`, `field_no`, and `field_val`
+# - For each group, sum the number of fields where `match` == TRUE
+# - Keep only records where no matches were found
+# - Extract the `field_val` column as a vector
+# - Sum the contents of the `field_val` column
+answer1 <- field_matches %>% 
   group_by(ticket_no, field_no, field_val) %>% 
   summarise_at('match', sum) %>% 
   filter(match == 0) %>% 
