@@ -68,9 +68,14 @@
 - 490.52us
 - 20.698903ms
 
+### Day 15
+
+- 17.253us
+- 560.441327ms
+
 ## Total so far...
 
-- Part Ones: 24.324854ms
-- Part Twos: 55.946531ms
-- Total: 80.271385ms
+- Part Ones: 24.342107ms
+- Part Twos: 616.387858ms
+- Total: 640.729965ms
 
