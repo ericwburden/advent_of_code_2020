@@ -180,7 +180,7 @@ test_input <- c(
   "..#",
   "###"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 # Given a set of input lines representing a 'slice' of a 3d space `input`, 
 # returns a three-dimensional array containing that slice
