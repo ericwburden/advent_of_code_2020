@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, Error, ErrorKind};
 use std::ops::Range;
 
+/// Produces a closure that tests if a number is in one of a pair of ranges
 pub fn field_test_fn(range1: Range<u32>, range2: Range<u32>) -> Box<dyn Fn(&u32) -> bool> {
     Box::new(move |n: &u32| range1.contains(&n) || range2.contains(&n))
 }
