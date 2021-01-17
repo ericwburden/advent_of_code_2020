@@ -1,10 +1,12 @@
 mod four_dim_grid;
+mod threaded_four_dim_grid;
 mod three_dim_grid;
 
 use four_dim_grid::FourDimGrid;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
 use std::time::Instant;
+use threaded_four_dim_grid::ThreadedFourDimGrid;
 use three_dim_grid::ThreeDimGrid;
 
 const CYCLES: usize = 6;
@@ -38,6 +40,12 @@ fn main() {
 
     let start = Instant::now();
     let mut grid = FourDimGrid::from_slice(&slice);
+    grid.advance_n_times(CYCLES as u8);
+    println!("\nCompleted in {:?}", start.elapsed());
+    println!("{}\n", grid.count_active());
+
+    let start = Instant::now();
+    let mut grid = ThreadedFourDimGrid::from_slice(&slice);
     grid.advance_n_times(CYCLES as u8);
     println!("\nCompleted in {:?}", start.elapsed());
     println!("{}\n", grid.count_active());

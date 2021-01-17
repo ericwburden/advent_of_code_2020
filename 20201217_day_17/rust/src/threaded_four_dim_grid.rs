@@ -1,13 +1,16 @@
 use crate::CYCLES;
+use std::sync::mpsc::{Receiver, Sender};
+use std::sync::{mpsc, Arc};
+use std::thread;
 
-pub struct FourDimGrid {
+pub struct ThreadedFourDimGrid {
     dimensions: [usize; 4],
     active_range: [(usize, usize); 4],
-    state: Vec<Vec<Vec<Vec<bool>>>>,
-    neighbors: Vec<Vec<Vec<Vec<Vec<[usize; 4]>>>>>,
+    state: Arc<Vec<Vec<Vec<Vec<bool>>>>>,
+    neighbors: Arc<Vec<Vec<Vec<Vec<Vec<[usize; 4]>>>>>>,
 }
 
-impl FourDimGrid {
+impl ThreadedFourDimGrid {
     pub fn from_slice(slice: &Vec<Vec<bool>>) -> Self {
         let slice_dims = [1, 1, slice[0].len(), slice.len()];
         let dimensions = [
@@ -49,17 +52,17 @@ impl FourDimGrid {
                     for x in 0..dimensions[3] {
                         let coord = [q, z, y, x];
                         neighbors[q][z][y][x] =
-                            FourDimGrid::calc_neighbor_coords(&coord, &dimensions);
+                            ThreadedFourDimGrid::calc_neighbor_coords(&coord, &dimensions);
                     }
                 }
             }
         }
 
-        FourDimGrid {
+        ThreadedFourDimGrid {
             dimensions,
             active_range,
-            state,
-            neighbors,
+            state: Arc::new(state),
+            neighbors: Arc::new(neighbors),
         }
     }
 
@@ -137,39 +140,101 @@ impl FourDimGrid {
         active_neighbors
     }
 
-    pub fn advance_state(&mut self) {
-        let mut new_grid_state = self.state.clone();
+    /// In order to use threading, this function needs to not rely on references to 'self'
+    fn next_cube_state(
+        state: &Vec<Vec<Vec<Vec<bool>>>>,
+        neighbors: &Vec<[usize; 4]>,
+        coord: &[usize; 4],
+    ) -> bool {
+        let mut active_neighbors = 0;
+        // The q and z-layers the slice was inserted into
+        let in_qslice = coord[0] == CYCLES;
+        let in_zslice = coord[1] == CYCLES;
+        let in_slice = in_qslice && in_zslice;
+        for n in neighbors {
+            if state[n[0]][n[1]][n[2]][n[3]] {
+                if in_slice && n[0] != coord[0] && n[1] != coord[1] {
+                    active_neighbors += 1; // Reflection across both the q and z axes
+                }
+                if in_qslice && n[0] != coord[0] {
+                    active_neighbors += 1; // Reflection across the central q axis
+                }
+                if in_zslice && n[1] != coord[1] {
+                    active_neighbors += 1; // Reflection across the central z axis
+                }
+                active_neighbors += 1;
+            }
+        }
 
+        match state[coord[0]][coord[1]][coord[2]][coord[3]] {
+            true => active_neighbors == 2 || active_neighbors == 3,
+            false => active_neighbors == 3,
+        }
+    }
+
+    pub fn advance_state(&mut self) {
         // Expand the active range by one in all directions to account for new active cubes
         let old_range = &self.active_range;
-        self.active_range = [
+        let active_range = [
             (old_range[0].0 - 1, old_range[0].1),
             (old_range[1].0 - 1, old_range[1].1),
             (old_range[2].0 - 1, old_range[2].1 + 1),
             (old_range[3].0 - 1, old_range[3].1 + 1),
         ];
 
-        let qrange = self.active_range[0].0..self.active_range[0].1;
-        let zrange = self.active_range[1].0..self.active_range[1].1;
-        let yrange = self.active_range[2].0..self.active_range[2].1;
-        let xrange = self.active_range[3].0..self.active_range[3].1;
+        let mut child_threads = Vec::new();
+        let (tx, rx): (
+            Sender<Vec<([usize; 4], bool)>>,
+            Receiver<Vec<([usize; 4], bool)>>,
+        ) = mpsc::channel();
+        for q in active_range[0].0..active_range[0].1 {
+            for z in active_range[1].0..active_range[1].1 {
+                let thread_tx = tx.clone();
+                let state = Arc::clone(&self.state);
+                let neighbors = Arc::clone(&self.neighbors);
+                let child = thread::spawn(move || {
+                    let mut updates: Vec<([usize; 4], bool)> = Vec::new();
 
-        for q in qrange {
-            for z in zrange.clone() {
-                for y in yrange.clone() {
-                    for x in xrange.clone() {
-                        let active_neighbors = self.get_active_neighbors(&[q, z, y, x]);
-                        let new_cube_state = match self.state[q][z][y][x] {
-                            true => active_neighbors == 2 || active_neighbors == 3,
-                            false => active_neighbors == 3,
-                        };
-                        new_grid_state[q][z][y][x] = new_cube_state;
+                    for y in active_range[2].0..active_range[2].1 {
+                        for x in active_range[3].0..active_range[3].1 {
+                            let new_cube_state = ThreadedFourDimGrid::next_cube_state(
+                                &state,
+                                &neighbors[q][z][y][x],
+                                &[q, z, y, x],
+                            );
+                            // Only push updates when the state is to change
+                            if &state[q][z][y][x] != &new_cube_state {
+                                updates.push(([q, z, y, x], new_cube_state))
+                            }
+                        }
                     }
+
+                    thread_tx.send(updates).unwrap(); // Send updates to the channel
+                });
+                child_threads.push(child);
+            }
+        }
+
+        // Read all the updates from all the channels and update the state.
+        let mut updates: Vec<([usize; 4], bool)> = Vec::with_capacity(2000);
+        for _ in active_range[0].0..active_range[0].1 {
+            for _ in active_range[1].0..active_range[1].1 {
+                for update in rx.recv() {
+                    updates.extend(update);
                 }
             }
         }
 
-        self.state = new_grid_state;
+        for child in child_threads {
+            child.join().expect("oops! the child thread panicked");
+        }
+
+        let mut_self_state = Arc::get_mut(&mut self.state).unwrap();
+        for u in updates {
+            mut_self_state[u.0[0]][u.0[1]][u.0[2]][u.0[3]] = u.1;
+        }
+
+        self.active_range = active_range;
     }
 
     pub fn advance_n_times(&mut self, n: u8) {
