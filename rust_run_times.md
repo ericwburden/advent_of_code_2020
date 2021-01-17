@@ -78,9 +78,14 @@
 - 354.048us
 - 422.579us
 
+### Day 17
+
+- 2.253255ms
+- 30.7999068ms
+
 ## Total so far...
 
-- Part Ones: 24.696155ms
-- Part Twos: 616.810437ms
-- Total: 641.506592ms
+- Part Ones:  26.94941ms
+- Part Twos: 647.609505ms
+- Total:     674.558905ms
 

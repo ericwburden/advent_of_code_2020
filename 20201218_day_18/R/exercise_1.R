@@ -59,7 +59,7 @@ test_input <- c(
   "5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))",
   "((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 
 # Given a string with at least some part contained in parentheses 
