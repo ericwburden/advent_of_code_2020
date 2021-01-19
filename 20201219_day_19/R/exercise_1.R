@@ -98,7 +98,7 @@ test_input <- c(
   "aaabbb",
   "aaaabbb"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 # Functions --------------------------------------------------------------------
 
