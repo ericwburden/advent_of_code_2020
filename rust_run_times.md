@@ -1,3 +1,7 @@
+# AOC Rust Runtimes
+
+## Daily Totals
+
 ### Day 1
 
 - 13.577us
@@ -83,9 +87,13 @@
 - 2.253255ms
 - 30.7999068ms
 
-## Total so far...
+### Day 18
 
-- Part Ones:  26.94941ms
-- Part Twos: 647.609505ms
-- Total:     674.558905ms
+- 440.962us
+- 86.279us
 
+## Total
+
+- Part Ones:  27.390372ms
+- Part Twos: 647.695784ms
+- Total:     675.086156ms

@@ -114,32 +114,6 @@ impl ThreadedFourDimGrid {
         neighbors
     }
 
-    pub fn get_active_neighbors(&self, coord: &[usize; 4]) -> u8 {
-        let coord_neighbors = &self.neighbors[coord[0]][coord[1]][coord[2]][coord[3]];
-
-        let mut active_neighbors = 0;
-        // The q and z-layers the slice was inserted into
-        let in_qslice = coord[0] == CYCLES;
-        let in_zslice = coord[1] == CYCLES;
-        let in_slice = in_qslice && in_zslice;
-        for n in coord_neighbors {
-            if self.state[n[0]][n[1]][n[2]][n[3]] {
-                if in_slice && n[0] != coord[0] && n[1] != coord[1] {
-                    active_neighbors += 1; // Reflection across both the q and z axes
-                }
-                if in_qslice && n[0] != coord[0] {
-                    active_neighbors += 1; // Reflection across the central q axis
-                }
-                if in_zslice && n[1] != coord[1] {
-                    active_neighbors += 1; // Reflection across the central z axis
-                }
-                active_neighbors += 1;
-            }
-        }
-
-        active_neighbors
-    }
-
     /// In order to use threading, this function needs to not rely on references to 'self'
     fn next_cube_state(
         state: &Vec<Vec<Vec<Vec<bool>>>>,
