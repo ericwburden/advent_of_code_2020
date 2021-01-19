@@ -186,8 +186,8 @@
 
 # Input ------------------------------------------------------------------------
 
-test_input <- readLines('test_input.txt')
-real_input <- readLines('input.txt')
+test_input <- readLines('../test_input.txt')
+real_input <- readLines('../input.txt')
 
 
 # Functions --------------------------------------------------------------------
