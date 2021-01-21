@@ -126,10 +126,10 @@ is_sea_monster <- function(i, full_image) {
   # of the indices that need to contain a '#' in order to signify a
   # sea monster
   monster_indices <- list(
-    c(mr, mc),     c(mr+1, mc+1),  c(mr+1, mc+4),  c(mr, mc+5),
-    c(mr, mc+6),   c(mr+1, mc+7),  c(mr+1, mc+10), c(mr, mc+11),
-    c(mr, mc+12),  c(mr+1, mc+13), c(mr+1, mc+16), c(mr, mc+17),
-    c(mr-1, mc+18), c(mr, mc+18),  c(mr, mc+19)
+    c(mr  , mc),    c(mr+1, mc+1),  c(mr+1, mc+4),  c(mr, mc+5),
+    c(mr  , mc+6),  c(mr+1, mc+7),  c(mr+1, mc+10), c(mr, mc+11),
+    c(mr  , mc+12), c(mr+1, mc+13), c(mr+1, mc+16), c(mr, mc+17),
+    c(mr-1, mc+18), c(mr  , mc+18), c(mr  , mc+19)
   )
   
   # Do all the `monster_indices` contain a '#'?
