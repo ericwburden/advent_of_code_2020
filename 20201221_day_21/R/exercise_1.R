@@ -52,7 +52,7 @@ test_input <- c(
   "sqjhc fvjkl (contains soy)",
   "sqjhc mxmxvkd sbzzf (contains fish)"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 library(dplyr)
 library(purrr)
@@ -105,4 +105,4 @@ answer1 <- recipe_list %>%
   distinct(recipe, ingredient) %>% 
   nrow()
   
-  
+# 2569

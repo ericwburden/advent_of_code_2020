@@ -60,3 +60,4 @@ answer2 <- confirmed_allergens %>%
   pull(ingredient) %>% 
   paste(collapse = ',')
 
+# vmhqr,qxfzc,khpdjv,gnrpml,xrmxxvn,rfmvh,rdfr,jxh
