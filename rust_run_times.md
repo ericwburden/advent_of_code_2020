@@ -102,8 +102,13 @@
 - 24.011667ms
 - 821.543us
 
+### Day 21
+
+- 1.622166ms
+- 20.961us
+
 ## Total
 
-- Part Ones:  53.784916ms
-- Part Twos: 650.789881ms
-- Total:     704.574797ms
+- Part Ones:  55.407082ms
+- Part Twos: 650.810842ms
+- Total:     706.217924ms
