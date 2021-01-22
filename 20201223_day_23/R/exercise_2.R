@@ -27,7 +27,7 @@
 # you get if you multiply their labels together?
 
 # Setup ------------------------------------------------------------------------
-                
+
 source('exercise_1.R')
 
 

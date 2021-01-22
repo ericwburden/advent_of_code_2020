@@ -237,4 +237,4 @@ for (i in 1:8) {
 }
 answer1 <- paste(cups_in_order, collapse = '')
 
-# Answer: 52738469
+# Answer: 62934785
