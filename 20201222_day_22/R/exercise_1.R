@@ -134,7 +134,7 @@ test_input <- c(
   "Player 2:",
   "5", "8", "4", "7", "10"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 library(dequer)
 
