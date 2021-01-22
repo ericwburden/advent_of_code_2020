@@ -324,7 +324,7 @@ infinite_input <- c(
   "Player 2:",
   "2", "29", "14"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 library(dequer)
 library(digest)
@@ -402,6 +402,7 @@ game_state <- parse_input(real_input)
 while (is.null(game_state$winning_hand)) { 
   game_state <- next_state(game_state) 
   if (game_state$round %% 25 == 0) { pprint(game_state) }
+  if (game_state$round > 200 & game_state$round < 225) { pprint(game_state) }
 }
 
 cards_in_winning_hand <- length(game_state$winning_hand)
