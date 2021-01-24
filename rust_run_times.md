@@ -122,8 +122,12 @@
 - 1.195345us
 - 56.694724ms
 
+### Day 25
+
+- 39.846949ms
+
 ## Total
 
-- Part Ones:   56.636992ms
+- Part Ones:   96.483941ms
 - Part Twos: 1041.679406ms
-- Total:     1098.316398ms
+- Total:     1138.163347ms
