@@ -89,7 +89,7 @@ test_input <- c(
   "neswnwewnwnwseenwseesewsenwsweewe",
   "wseweeenwnesenwwwswnew"
 )
-real_input <- readLines('input.txt')
+real_input <- readLines('../input.txt')
 
 
 # Mapping of compass directions to offsets in three-dimensional space

@@ -162,7 +162,7 @@ close(pb)
 
 answer2 <- sum(tile_map, na.rm = T)  # Sum the number of black tiles
 
-# Answer: 3706
+# Answer: 3667
 # Run Time:
 #    user  system elapsed 
 # 330.447   0.378 331.982 
