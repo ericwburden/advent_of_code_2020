@@ -9,3 +9,7 @@ I've blogged my approaches to the R version of each solution here: [Advent of Co
 ## Next Steps
 
 I found these puzzles to be interesting and diverse enough, and at a reasonable enough difficulty level, to make a really good set of exercises for learning new languages. In particular, I'm working on picking up Rust, so each day is going to start being divided into an `R` and a `rust` folder. The `R` folder will look just like the days that haven't been converted, the `rust` folder will have a crate from `cargo new` with *.rs files containing the solution code.
+
+### Update
+
+I've finished implementing all 25 Days in Rust. As I suspected, this was a really good set of problems to work through as I learned the language. I now feel *competent* (if not exactly *excellent*) at writing Rust code. I [timed the code execution](rust_run_times.md) for all 25 days on my laptop, and Rust is able to chew through both parts of all 25 days in less that 1.14 seconds. This is a **vast** improvement over the R run times, though I do have to admit I find it much easier to reason through the puzzles in R (and a few of the days that I solved with R-specific features like matrices/arrays or environments took some extra thought-work). In the end, I've learned a lot and feel like I can go and be productive with Rust, which is everything I could have hoped for.
