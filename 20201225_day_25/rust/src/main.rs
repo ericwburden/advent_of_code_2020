@@ -1,6 +1,7 @@
 use std::time::Instant;
 
 fn main() {
+    println!("\n--- Advent of Code 2020, Day 25 ---\n");
     let start = Instant::now();
     let card_key = 3248366u64;
     let door_key = 4738476u64;
