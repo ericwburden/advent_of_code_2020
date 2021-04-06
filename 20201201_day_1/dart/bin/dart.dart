@@ -40,7 +40,32 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:tuple/tuple.dart';
+/// Class to support returning a tuple of two ints
+class IntTuple2 {
+  late int item1;
+  late int item2;
+
+  IntTuple2(int item1, int item2) {
+    this.item1 = item1;
+    this.item2 = item2;
+  }
+
+  /// Add indexing to this class
+  int operator [](int idx) {
+    if (idx == 0) {
+      return item1;
+    }
+    if (idx == 1) {
+      return item2;
+    }
+    throw IndexError(idx, this);
+  }
+
+  /// Needed for the IndexError constructor
+  int length() {
+    return 2;
+  }
+}
 
 /// Returns a sorted list of the numbers in the input file.
 ///
@@ -58,14 +83,14 @@ Future<List<int>> readInput(String path) async {
 }
 
 /// Finds two numbers in a list that add to a given total
-Tuple2<int, int>? findTwoAddends(List<int> nums, int total) {
+IntTuple2? findTwoAddends(List<int> nums, int total) {
   var p1 = 0;
   var p2 = nums.length - 1;
 
   while (p1 < p2) {
     var currentSum = nums[p1] + nums[p2];
     if (currentSum == total) {
-      return Tuple2(nums[p1], nums[p2]);
+      return IntTuple2(nums[p1], nums[p2]);
     }
     if (currentSum < total) {
       p1++;
