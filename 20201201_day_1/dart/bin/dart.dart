@@ -58,7 +58,7 @@ Future<List<int>> readInput(String path) async {
 }
 
 /// Finds two numbers in a list that add to a given total
-Future<Tuple2<int, int>?> findTwoAddends(List<int> nums, int total) async {
+Tuple2<int, int>? findTwoAddends(List<int> nums, int total) {
   var p1 = 0;
   var p2 = nums.length - 1;
 
@@ -80,7 +80,7 @@ Future<Tuple2<int, int>?> findTwoAddends(List<int> nums, int total) async {
 /// Solves part one of the puzzle.
 Future<int?> partOne(int total, String path) async {
   var nums = await readInput(path);
-  var addends = await findTwoAddends(nums, total);
+  var addends = findTwoAddends(nums, total);
   if (addends == null) {
     return null;
   }
@@ -93,7 +93,7 @@ Future<int?> partTwo(int total, String path) async {
   var diffs = nums.map((n) => total - n).toList();
 
   for (var idx = 0; idx < nums.length; idx++) {
-    var addends = await findTwoAddends(nums.sublist(idx), diffs[idx]);
+    var addends = findTwoAddends(nums.sublist(idx), diffs[idx]);
     if (addends != null) {
       if (nums[idx] + addends.item1 + addends.item2 == total) {
         return nums[idx] * addends.item1 * addends.item2;
