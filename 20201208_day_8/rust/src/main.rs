@@ -137,6 +137,6 @@ fn main() {
     };
 
     // Run the parts and report the result and time taken
-    time_it(part_one::solve, &input); // 1271
+    time_it(part_one::solve, &input); // 1217
     time_it(part_two::solve, &input); // 501
 }
